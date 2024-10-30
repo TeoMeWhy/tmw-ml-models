@@ -25,8 +25,8 @@ func main() {
 		}
 
 		conMySQL.AutoMigrate(&models.UserChurnProba{})
-
 		log.Println("ok")
+		return
 	}
 
 	go results.AutoResults()
