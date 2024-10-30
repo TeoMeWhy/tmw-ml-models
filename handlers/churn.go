@@ -13,7 +13,13 @@ func GETUserChurnScore(c *gin.Context) {
 
 	probaRank, err := controllers.GetChurnScore(idUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+
+		if err.Error() == "record not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
