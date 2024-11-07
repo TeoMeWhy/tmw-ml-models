@@ -93,6 +93,8 @@ func AutoResults() error {
 		data, err := GetResults(conDatabricks)
 		if err != nil {
 			log.Println(err)
+			time.Sleep(time.Minute * 5)
+			continue
 		}
 
 		if err := InsertResults(data, conMySQL); err != nil {
