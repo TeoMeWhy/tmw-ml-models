@@ -76,19 +76,19 @@ func InsertResults(users []models.UserChurnProba, con *gorm.DB) error {
 
 func AutoResults() error {
 
-	conDatabricks, err := db.ConnectDatabricks()
-	if err != nil {
-		log.Println("Erro ao conectar o databricks:", err)
-		return err
-	}
-
-	conMySQL, err := db.ConnectMySQL()
-	if err != nil {
-		log.Println("Erro ao conectar o MySQL:", err)
-		return err
-	}
-
 	for {
+
+		conMySQL, err := db.ConnectMySQL()
+		if err != nil {
+			log.Println("Erro ao conectar o MySQL:", err)
+			return err
+		}
+
+		conDatabricks, err := db.ConnectDatabricks()
+		if err != nil {
+			log.Println("Erro ao conectar o databricks:", err)
+			return err
+		}
 
 		data, err := GetResults(conDatabricks)
 		if err != nil {
@@ -101,6 +101,7 @@ func AutoResults() error {
 			log.Println(err)
 		}
 
+		conDatabricks.Close()
 		time.Sleep(time.Hour * 12)
 	}
 
