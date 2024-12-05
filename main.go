@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 	"log"
-	"tmw_models/db"
+	"tmw_models/clients/aurora"
+	"tmw_models/controllers"
 	"tmw_models/handlers"
 	"tmw_models/models"
-	"tmw_models/results"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,19 +19,21 @@ func main() {
 	if *migration {
 		log.Println("Executando migrations...")
 
-		conMySQL, err := db.ConnectMySQL()
+		auroraClient, err := aurora.NewAuroraClient()
 		if err != nil {
 			log.Println(err)
 		}
 
-		conMySQL.AutoMigrate(&models.UserChurnProba{})
+		auroraClient.Connection.AutoMigrate(&models.UserChurnProba{}, &models.UserRetro{})
 		log.Println("ok")
 		return
 	}
 
-	go results.AutoResults()
+	go controllers.ChurnController()
+	go controllers.RetroController()
 
 	r := gin.Default()
 	r.GET("/churn_score/:id", handlers.GETUserChurnScore)
+	r.GET("/retro_2024/:id", handlers.GETUserRetro)
 	r.Run("0.0.0.0:8080")
 }
